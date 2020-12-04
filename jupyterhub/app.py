@@ -1363,6 +1363,7 @@ class JupyterHub(Application):
     ).tag(config=True)
 
     def init_handlers(self):
+        import tornado_xstatic
         h = []
         # load handlers from the authenticator
         h.extend(self.authenticator.get_handlers(self))
@@ -1385,6 +1386,8 @@ class JupyterHub(Application):
                     r"%s(user|services)/([^/]+)" % self.base_url,
                     handlers.AddSlashHandler,
                 ),
+                (r"/xstatic/(.*)", tornado_xstatic.XStaticFileHandler,
+                 {'allowed_modules': ['termjs']}),
                 (r"(?!%s).*" % self.hub_prefix, handlers.PrefixRedirectHandler),
                 (r'(.*)', handlers.Template404),
             ]
@@ -2193,6 +2196,7 @@ class JupyterHub(Application):
         )
 
     def init_tornado_settings(self):
+        import tornado_xstatic
         """Set up the tornado settings dict."""
         base_url = self.hub.base_url
         jinja_options = dict(autoescape=True, enable_async=True)
@@ -2255,6 +2259,7 @@ class JupyterHub(Application):
             redirect_to_server=self.redirect_to_server,
             login_url=login_url,
             logout_url=logout_url,
+            xstatic_url = tornado_xstatic.url_maker ('/xstatic/'),
             static_path=os.path.join(self.data_files_path, 'static'),
             static_url_prefix=url_path_join(self.hub.base_url, 'static/'),
             static_handler_class=CacheControlStaticFilesHandler,
