@@ -5,7 +5,7 @@ import sys
 c.JupyterHub.services = [
     {
         'name': 'announcement',
-        'url': 'http://127.0.0.1:8888',
+        'url': 'http://127.0.0.1:8000',
         'command': [sys.executable, "-m", "announcement"],
     }
 ]
